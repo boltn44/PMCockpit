@@ -26,7 +26,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     <div className="w-64 bg-slate-900 text-white min-h-screen">
       <div className="p-6">
         <div className="flex items-center gap-3 mb-8">
-          <BarChart3 className="w-8 h-8 text-green-400" />
+          <BarChart3 className="w-8 h-8 text-blue-400" />
           <h1 className="text-xl font-bold">PM-Cockpit</h1>
         </div>
         
@@ -34,8 +34,6 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         <div className="mb-6 p-3 bg-slate-800 rounded-lg">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-            </div>
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium">
                 {user?.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
               </span>
@@ -61,7 +59,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
                   activeTab === item.id
-                    ? 'bg-green-600 text-white'
+                    ? 'bg-blue-600 text-white'
                     : 'text-slate-300 hover:text-white hover:bg-slate-800'
                 }`}
               >

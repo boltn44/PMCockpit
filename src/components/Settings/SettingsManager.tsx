@@ -73,7 +73,7 @@ export function SettingsManager({ settings, setSettings }: SettingsManagerProps)
                 type="text"
                 value={formData.companyName}
                 onChange={(e) => setFormData({...formData, companyName: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={!canEdit}
               />
             </div>
@@ -83,7 +83,7 @@ export function SettingsManager({ settings, setSettings }: SettingsManagerProps)
               <select
                 value={formData.currency}
                 onChange={(e) => setFormData({...formData, currency: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={!canEdit}
               >
                 <option value="USD">USD - US Dollar</option>
@@ -109,7 +109,7 @@ export function SettingsManager({ settings, setSettings }: SettingsManagerProps)
               <select
                 value={formData.theme}
                 onChange={(e) => setFormData({...formData, theme: e.target.value as 'light' | 'dark'})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={!canEdit}
               >
                 <option value="light">Light</option>
@@ -122,7 +122,7 @@ export function SettingsManager({ settings, setSettings }: SettingsManagerProps)
               <select
                 value={formData.dateFormat}
                 onChange={(e) => setFormData({...formData, dateFormat: e.target.value as any})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={!canEdit}
               >
                 <option value="MM/DD/YYYY">MM/DD/YYYY</option>
@@ -145,7 +145,7 @@ export function SettingsManager({ settings, setSettings }: SettingsManagerProps)
             <select
               value={formData.timezone}
               onChange={(e) => setFormData({...formData, timezone: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={!canEdit}
             >
               <option value="UTC">UTC - Coordinated Universal Time</option>
@@ -182,7 +182,7 @@ export function SettingsManager({ settings, setSettings }: SettingsManagerProps)
                   className="sr-only peer"
                   disabled={!canEdit}
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
               </label>
             </div>
           </div>
@@ -202,7 +202,7 @@ export function SettingsManager({ settings, setSettings }: SettingsManagerProps)
             <select
               value={formData.autoLogout}
               onChange={(e) => setFormData({...formData, autoLogout: parseInt(e.target.value)})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={!canEdit}
             >
               <option value={15}>15 minutes</option>
@@ -231,7 +231,7 @@ export function SettingsManager({ settings, setSettings }: SettingsManagerProps)
             <button
               type="submit"
               disabled={isSaving}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <Save className="w-4 h-4" />
               {isSaving ? 'Saving...' : 'Save Settings'}

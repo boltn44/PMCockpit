@@ -266,7 +266,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
         <div className="flex gap-3">
           <button
             onClick={() => setIsFormOpen(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
+            className="bg-amber-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-amber-700 transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Date Range
@@ -276,7 +276,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
             <button
               onClick={saveUtilizations}
               disabled={saving}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               {saving ? 'Saving...' : 'Save Utilizations'}
@@ -295,14 +295,14 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
         <div className="space-y-3">
           {dateRanges.map((range) => (
             <div key={range.id} className={`flex items-center justify-between p-4 rounded-lg border-2 transition-colors ${
-              range.is_active ? 'border-green-300 bg-green-50' : 'border-gray-200 bg-gray-50'
+              range.is_active ? 'border-amber-300 bg-amber-50' : 'border-gray-200 bg-gray-50'
             }`}>
               <div className="flex items-center gap-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-gray-900">{range.name}</h3>
                     {range.is_active && (
-                      <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                      <span className="px-2 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
                         Active
                       </span>
                     )}
@@ -317,7 +317,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
                 {!range.is_active && (
                   <button
                     onClick={() => handleSetActive(range.id)}
-                    className="text-green-600 hover:text-green-800 p-1 rounded transition-colors"
+                    className="text-amber-600 hover:text-amber-800 p-1 rounded transition-colors"
                     title="Set as active"
                   >
                     <Check className="w-4 h-4" />
@@ -363,7 +363,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                   placeholder="e.g., Q1 2024, January 2024"
                 />
               </div>
@@ -375,7 +375,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
                   required
                   value={formData.start_date}
                   onChange={(e) => setFormData({...formData, start_date: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
               </div>
               
@@ -386,7 +386,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
                   required
                   value={formData.end_date}
                   onChange={(e) => setFormData({...formData, end_date: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
               </div>
               
@@ -396,7 +396,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
                   id="is_active"
                   checked={formData.is_active}
                   onChange={(e) => setFormData({...formData, is_active: e.target.checked})}
-                  className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
+                  className="w-4 h-4 text-amber-600 bg-gray-100 border-gray-300 rounded focus:ring-amber-500"
                 />
                 <label htmlFor="is_active" className="ml-2 text-sm font-medium text-gray-700">
                   Set as active date range
@@ -413,7 +413,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
                 >
                   {editingRange ? 'Update' : 'Create'}
                 </button>
@@ -500,7 +500,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
                             max="100"
                             value={currentValue}
                             onChange={(e) => updateUtilization(resource.id, project.id, parseInt(e.target.value) || 0)}
-                            className="w-16 text-center text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                            className="w-16 text-center text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                           />
                         </td>
                       );
@@ -551,7 +551,7 @@ export function ResourceUtilizationManager({ resources, projects }: ResourceUtil
             </p>
             <button
               onClick={() => setIsFormOpen(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors mx-auto"
+              className="bg-amber-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-amber-700 transition-colors mx-auto"
             >
               <Plus className="w-4 h-4" />
               Create Date Range

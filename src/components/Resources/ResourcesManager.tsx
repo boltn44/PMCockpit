@@ -160,7 +160,7 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Users className="w-8 h-8 text-green-600" />
+            <Users className="w-8 h-8 text-purple-600" />
             Resources Management
           </h1>
           <p className="text-gray-600 mt-2">Manage your team resources</p>
@@ -168,7 +168,7 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
         
         <button
           onClick={() => setIsFormOpen(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
+          className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Resource
@@ -184,13 +184,13 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
             placeholder="Search resources..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
           />
         </div>
         <select
           value={filterDepartment}
           onChange={(e) => setFilterDepartment(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
         >
           <option value="">All Departments</option>
           {departments.map(deptName => (
@@ -215,7 +215,7 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
               </div>
               
@@ -226,7 +226,7 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
                   required
                   value={formData.designation}
                   onChange={(e) => setFormData({...formData, designation: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
               </div>
               
@@ -236,7 +236,7 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
                   required
                   value={formData.department}
                   onChange={(e) => setFormData({...formData, department: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 >
                   <option value="">Select Department</option>
                   {departments.map(deptName => (
@@ -250,7 +250,7 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
                 <select
                   value={formData.availability}
                   onChange={(e) => setFormData({...formData, availability: e.target.value as 'Onshore' | 'Offshore'})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 >
                   <option value="Onshore">Onshore</option>
                   <option value="Offshore">Offshore</option>
@@ -262,7 +262,7 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value as 'Active' | 'In-Active'})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 >
                   <option value="Active">Active</option>
                   <option value="In-Active">In-Active</option>
@@ -280,7 +280,7 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
                 >
                   {loading ? 'Saving...' : (editingResource ? 'Update' : 'Create')}
                 </button>
@@ -352,8 +352,8 @@ export function ResourcesManager({ resources, setResources, onRefresh }: Resourc
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       resource.availability === 'Onshore' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-blue-100 text-blue-800'
+                        ? 'bg-blue-100 text-blue-800' 
+                        : 'bg-green-100 text-green-800'
                     }`}>
                       {resource.availability}
                     </span>

@@ -273,7 +273,7 @@ export function UtilizationReport({ resources, projects }: UtilizationReportProp
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <FileText className="w-8 h-8 text-green-600" />
+            <FileText className="w-8 h-8 text-indigo-600" />
             Utilization Report
           </h1>
           <p className="text-gray-600 mt-2">Generate and export resource utilization reports</p>
@@ -313,7 +313,7 @@ export function UtilizationReport({ resources, projects }: UtilizationReportProp
             <select
               value={selectedDateRange}
               onChange={(e) => setSelectedDateRange(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="">Select Date Range</option>
               {dateRanges.map(range => (
@@ -329,7 +329,7 @@ export function UtilizationReport({ resources, projects }: UtilizationReportProp
             <select
               value={filterDepartment}
               onChange={(e) => setFilterDepartment(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="">All Departments</option>
               {departments.map(dept => (
@@ -343,7 +343,7 @@ export function UtilizationReport({ resources, projects }: UtilizationReportProp
             <select
               value={filterAvailability}
               onChange={(e) => setFilterAvailability(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="">All Locations</option>
               <option value="Onshore">Onshore</option>
@@ -374,7 +374,7 @@ export function UtilizationReport({ resources, projects }: UtilizationReportProp
                 <p className="text-sm text-gray-600">Total Resources</p>
                 <p className="text-2xl font-bold text-gray-900">{summaryStats.totalResources}</p>
               </div>
-              <BarChart3 className="w-8 h-8 text-green-500" />
+              <BarChart3 className="w-8 h-8 text-blue-500" />
             </div>
           </div>
           
@@ -384,8 +384,8 @@ export function UtilizationReport({ resources, projects }: UtilizationReportProp
                 <p className="text-sm text-gray-600">Avg Utilization</p>
                 <p className="text-2xl font-bold text-gray-900">{summaryStats.averageUtilization}%</p>
               </div>
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 font-bold text-sm">%</span>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <span className="text-blue-600 font-bold text-sm">%</span>
               </div>
             </div>
           </div>
@@ -490,7 +490,7 @@ export function UtilizationReport({ resources, projects }: UtilizationReportProp
                         </span>
                       </td>
                     ))}
-                    <td className="px-6 py-4 text-center font-bold bg-green-50">
+                    <td className="px-6 py-4 text-center font-bold bg-blue-50">
                       <span className={getUtilizationColor(row.totalUtilization)}>
                         {row.totalUtilization}%
                       </span>

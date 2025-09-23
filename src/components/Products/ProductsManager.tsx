@@ -126,7 +126,7 @@ export function ProductsManager({ products, setProducts, onRefresh }: ProductsMa
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Package className="w-8 h-8 text-green-600" />
+            <Package className="w-8 h-8 text-blue-600" />
             Products Management
           </h1>
           <p className="text-gray-600 mt-2">Manage your product catalog</p>
@@ -134,7 +134,7 @@ export function ProductsManager({ products, setProducts, onRefresh }: ProductsMa
         
         <button
           onClick={() => setIsFormOpen(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Product
@@ -149,7 +149,7 @@ export function ProductsManager({ products, setProducts, onRefresh }: ProductsMa
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
 
@@ -169,7 +169,7 @@ export function ProductsManager({ products, setProducts, onRefresh }: ProductsMa
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               
@@ -180,7 +180,7 @@ export function ProductsManager({ products, setProducts, onRefresh }: ProductsMa
                   required
                   value={formData.shortName}
                   onChange={(e) => setFormData({...formData, shortName: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               
@@ -190,7 +190,7 @@ export function ProductsManager({ products, setProducts, onRefresh }: ProductsMa
                   required
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   rows={3}
                 />
               </div>
@@ -200,7 +200,7 @@ export function ProductsManager({ products, setProducts, onRefresh }: ProductsMa
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value as 'Active' | 'In-Active'})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="Active">Active</option>
                   <option value="In-Active">In-Active</option>
@@ -218,7 +218,7 @@ export function ProductsManager({ products, setProducts, onRefresh }: ProductsMa
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                   {loading ? 'Saving...' : (editingProduct ? 'Update' : 'Create')}
                 </button>
