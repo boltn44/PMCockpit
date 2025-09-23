@@ -127,7 +127,7 @@ export function DepartmentManager({ canEdit }: DepartmentManagerProps) {
         {canEdit && (
           <button
             onClick={() => setIsAdding(true)}
-            className="bg-blue-600 text-white px-3 py-1 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors text-sm"
+            className="bg-green-600 text-white px-3 py-1 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors text-sm"
           >
             <Plus className="w-4 h-4" />
             Add Department
@@ -138,13 +138,13 @@ export function DepartmentManager({ canEdit }: DepartmentManagerProps) {
       <div className="space-y-2">
         {/* Add new department form */}
         {isAdding && (
-          <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
             <input
               type="text"
               value={newDepartmentName}
               onChange={(e) => setNewDepartmentName(e.target.value)}
               placeholder="Enter department name"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
               autoFocus
             />
             <button
@@ -171,7 +171,7 @@ export function DepartmentManager({ canEdit }: DepartmentManagerProps) {
                   type="text"
                   value={editingName}
                   onChange={(e) => setEditingName(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
                   autoFocus
                 />
                 <button

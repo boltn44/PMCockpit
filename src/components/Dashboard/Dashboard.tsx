@@ -71,14 +71,14 @@ export function Dashboard({ products, projects, resources }: DashboardProps) {
           title="Active Products"
           value={activeProducts}
           icon={Package}
-          color="bg-blue-500"
+          color="bg-green-500"
         />
         <StatCard
           title="Active Projects"
           value={activeProjects}
           subtitle={`${activeProducts} products`}
           icon={FolderOpen}
-          color="bg-green-500"
+          color="bg-blue-500"
         />
         <StatCard
           title="Total Active Resources"
@@ -107,7 +107,7 @@ export function Dashboard({ products, projects, resources }: DashboardProps) {
             {departmentBreakdown.map((item, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <span className="text-gray-700 font-medium">{item.department}</span>
-                <span className="text-lg font-bold text-blue-600">{item.count}</span>
+                <span className="text-lg font-bold text-green-600">{item.count}</span>
               </div>
             ))}
           </div>
@@ -126,7 +126,7 @@ export function Dashboard({ products, projects, resources }: DashboardProps) {
                   <span className="text-gray-700 font-medium block">{item.project}</span>
                   <span className="text-sm text-gray-500">{item.percentage}% allocation</span>
                 </div>
-                <span className="text-lg font-bold text-green-600">{item.resourceCount}</span>
+                <span className="text-lg font-bold text-blue-600">{item.resourceCount}</span>
               </div>
             ))}
           </div>
@@ -140,27 +140,27 @@ export function Dashboard({ products, projects, resources }: DashboardProps) {
           Resource Availability Overview
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-blue-700 font-semibold">Onshore Resources</span>
-              <span className="text-2xl font-bold text-blue-800">{onshoreResources}</span>
+              <span className="text-green-700 font-semibold">Onshore Resources</span>
+              <span className="text-2xl font-bold text-green-800">{onshoreResources}</span>
             </div>
-            <div className="w-full bg-blue-200 rounded-full h-2">
+            <div className="w-full bg-green-200 rounded-full h-2">
               <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                className="bg-green-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${activeResources.length > 0 ? (onshoreResources / activeResources.length) * 100 : 0}%` }}
               ></div>
             </div>
           </div>
           
-          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-green-700 font-semibold">Offshore Resources</span>
-              <span className="text-2xl font-bold text-green-800">{offshoreResources}</span>
+              <span className="text-blue-700 font-semibold">Offshore Resources</span>
+              <span className="text-2xl font-bold text-blue-800">{offshoreResources}</span>
             </div>
-            <div className="w-full bg-green-200 rounded-full h-2">
+            <div className="w-full bg-blue-200 rounded-full h-2">
               <div 
-                className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${activeResources.length > 0 ? (offshoreResources / activeResources.length) * 100 : 0}%` }}
               ></div>
             </div>
