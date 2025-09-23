@@ -34,6 +34,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         <div className="mb-6 p-3 bg-slate-800 rounded-lg">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+            </div>
             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium">
                 {user?.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
