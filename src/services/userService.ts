@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { User } from '../types';
+import { emailService } from './emailService';
 
 export const userService = {
   async getAll(): Promise<User[]> {
@@ -22,6 +23,8 @@ export const userService = {
   },
 
   async create(user: Omit<User, 'id' | 'createdAt' | 'lastLogin'>): Promise<User> {
+    console.log('Creating user:', user);
+    
     const { data, error } = await supabase
       .from('users')
       .insert([{
@@ -35,7 +38,8 @@ export const userService = {
       .single();
     
     if (error) throw error;
-    return {
+    
+    const newUser = {
       id: data.id,
       username: data.username,
       email: data.email,
@@ -45,6 +49,33 @@ export const userService = {
       createdAt: data.created_at,
       lastLogin: data.last_login,
     };
+
+    // Send welcome email asynchronously (don't block user creation)
+    this.sendWelcomeEmailAsync(newUser);
+    
+    return newUser;
+  },
+
+  async sendWelcomeEmailAsync(user: User): Promise<void> {
+    try {
+      console.log('Sending welcome email for user:', user.username);
+      
+      const emailResult = await emailService.sendWelcomeEmail({
+        to: user.email,
+        username: user.username,
+        fullName: user.fullName,
+        role: user.role
+      });
+
+      if (emailResult.success) {
+        console.log(`Welcome email sent successfully to ${user.email}, Message ID: ${emailResult.messageId}`);
+      } else {
+        console.error(`Failed to send welcome email to ${user.email}:`, emailResult.error);
+      }
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+      // Don't throw error - email failure shouldn't break user creation
+    }
   },
 
   async update(id: string, updates: Partial<User>): Promise<User> {

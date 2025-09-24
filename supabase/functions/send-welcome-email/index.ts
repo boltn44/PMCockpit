@@ -1,0 +1,356 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+
+interface EmailRequest {
+  to: string;
+  username: string;
+  fullName: string;
+  role: string;
+}
+
+interface EmailResponse {
+  success: boolean;
+  messageId?: string;
+  error?: string;
+}
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+
+serve(async (req: Request): Promise<Response> => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders })
+  }
+
+  try {
+    const { to, username, fullName, role }: EmailRequest = await req.json()
+
+    // Validate required fields
+    if (!to || !username || !fullName) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Missing required fields' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    // Email configuration - using SendGrid as example
+    const SENDGRID_API_KEY = Deno.env.get('SENDGRID_API_KEY')
+    const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'noreply@pmcockpit.com'
+    const FROM_NAME = Deno.env.get('FROM_NAME') || 'PM-Cockpit Team'
+
+    if (!SENDGRID_API_KEY) {
+      console.error('SENDGRID_API_KEY not configured')
+      return new Response(
+        JSON.stringify({ success: false, error: 'Email service not configured' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    // Create email content
+    const emailHtml = generateWelcomeEmailHTML(fullName, username, role)
+    const emailText = generateWelcomeEmailText(fullName, username, role)
+
+    // SendGrid API payload
+    const emailPayload = {
+      personalizations: [
+        {
+          to: [{ email: to, name: fullName }],
+          subject: 'Welcome to PM-Cockpit - Account Created Successfully'
+        }
+      ],
+      from: {
+        email: FROM_EMAIL,
+        name: FROM_NAME
+      },
+      content: [
+        {
+          type: 'text/plain',
+          value: emailText
+        },
+        {
+          type: 'text/html',
+          value: emailHtml
+        }
+      ]
+    }
+
+    // Send email via SendGrid API
+    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(emailPayload),
+    })
+
+    if (response.ok) {
+      const messageId = response.headers.get('X-Message-Id') || 'unknown'
+      console.log(`Welcome email sent successfully to ${to}, Message ID: ${messageId}`)
+      
+      return new Response(
+        JSON.stringify({ success: true, messageId }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    } else {
+      const errorText = await response.text()
+      console.error(`Failed to send email to ${to}:`, errorText)
+      
+      return new Response(
+        JSON.stringify({ success: false, error: 'Failed to send email' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+  } catch (error) {
+    console.error('Error in send-welcome-email function:', error)
+    
+    return new Response(
+      JSON.stringify({ success: false, error: 'Internal server error' }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    )
+  }
+})
+
+function generateWelcomeEmailHTML(fullName: string, username: string, role: string): string {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to PM-Cockpit</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            background: #3b82f6;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .title {
+            color: #1f2937;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            margin: 8px 0 0 0;
+        }
+        .content {
+            margin: 30px 0;
+        }
+        .welcome-text {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 20px;
+        }
+        .account-details {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        .detail-value {
+            color: #6b7280;
+        }
+        .next-steps {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .next-steps h3 {
+            color: #1e40af;
+            margin: 0 0 15px 0;
+            font-size: 18px;
+        }
+        .next-steps ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .next-steps li {
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .support-info {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">PC</div>
+            <h1 class="title">Welcome to PM-Cockpit!</h1>
+            <p class="subtitle">Your account has been created successfully</p>
+        </div>
+        
+        <div class="content">
+            <p class="welcome-text">
+                Hello <strong>${fullName}</strong>,
+            </p>
+            
+            <p>
+                We're excited to welcome you to PM-Cockpit, your comprehensive project management dashboard. 
+                Your account has been successfully created and is ready to use.
+            </p>
+            
+            <div class="account-details">
+                <h3 style="margin-top: 0; color: #374151;">Account Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Full Name:</span>
+                    <span class="detail-value">${fullName}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Username:</span>
+                    <span class="detail-value">${username}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Role:</span>
+                    <span class="detail-value">${role}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Account Status:</span>
+                    <span class="detail-value" style="color: #059669; font-weight: 600;">Active</span>
+                </div>
+            </div>
+            
+            <div class="next-steps">
+                <h3>Next Steps</h3>
+                <ul>
+                    <li>Your system administrator will provide you with your login credentials</li>
+                    <li>Once you receive your credentials, you can access the PM-Cockpit dashboard</li>
+                    <li>Explore the dashboard features including project management, resource allocation, and reporting</li>
+                    <li>Contact support if you need any assistance getting started</li>
+                </ul>
+            </div>
+            
+            <div class="support-info">
+                <h4 style="margin: 0 0 10px 0; color: #374151;">Need Help?</h4>
+                <p style="margin: 0; color: #6b7280;">
+                    If you have any questions or need assistance, please contact our support team:<br>
+                    <strong>Email:</strong> support@pmcockpit.com<br>
+                    <strong>Phone:</strong> +1 (555) 123-4567
+                </p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>
+                This email was sent automatically by PM-Cockpit.<br>
+                © 2024 PM-Cockpit Solutions. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+  `
+}
+
+function generateWelcomeEmailText(fullName: string, username: string, role: string): string {
+  return `
+Welcome to PM-Cockpit!
+
+Hello ${fullName},
+
+We're excited to welcome you to PM-Cockpit, your comprehensive project management dashboard. Your account has been successfully created and is ready to use.
+
+Account Details:
+- Full Name: ${fullName}
+- Username: ${username}
+- Role: ${role}
+- Account Status: Active
+
+Next Steps:
+1. Your system administrator will provide you with your login credentials
+2. Once you receive your credentials, you can access the PM-Cockpit dashboard
+3. Explore the dashboard features including project management, resource allocation, and reporting
+4. Contact support if you need any assistance getting started
+
+Need Help?
+If you have any questions or need assistance, please contact our support team:
+Email: support@pmcockpit.com
+Phone: +1 (555) 123-4567
+
+This email was sent automatically by PM-Cockpit.
+© 2024 PM-Cockpit Solutions. All rights reserved.
+  `
+}

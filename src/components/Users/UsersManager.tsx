@@ -43,19 +43,26 @@ export function UsersManager({ users, setUsers, onRefresh }: UsersManagerProps) 
     try {
       if (editingUser) {
         await userService.update(editingUser.id, formData);
+        showSuccess(
+          'User Updated',
+          `${formData.fullName} has been updated successfully.`
+        );
       } else {
         await userService.create(formData);
+        showSuccess(
+          'User Created',
+          `${formData.fullName} has been created successfully. A welcome email has been sent to ${formData.email}.`
+        );
       }
       
       await onRefresh();
       resetForm();
-      showSuccess(
-        editingUser ? 'User Updated' : 'User Created',
-        `${formData.fullName} has been ${editingUser ? 'updated' : 'created'} successfully.`
-      );
     } catch (error) {
       console.error('Error saving user:', error);
-      showError('Error Saving User', 'Please try again.');
+      showError(
+        'Error Saving User', 
+        error instanceof Error ? error.message : 'Please try again.'
+      );
     } finally {
       setLoading(false);
     }
