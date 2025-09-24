@@ -39,7 +39,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     // Get environment variables
     const MAILTRAP_TOKEN = Deno.env.get('MAILTRAP_TOKEN')
-    const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'noreply@demomailtrap.co'
+    const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'masub.imtiaz@ascend.com.sa'
     const FROM_NAME = Deno.env.get('FROM_NAME') || 'PM-Cockpit Team'
 
     console.log('Environment check:', {
