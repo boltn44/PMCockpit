@@ -1,4 +1,8 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
 
 interface EmailRequest {
   to: string;
@@ -7,29 +11,23 @@ interface EmailRequest {
   role: string;
 }
 
-interface EmailResponse {
-  success: boolean;
-  messageId?: string;
-  error?: string;
-}
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
-
-serve(async (req: Request): Promise<Response> => {
+Deno.serve(async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { to, username, fullName, role }: EmailRequest = await req.json()
+    console.log('Edge Function called - processing email request')
+    
+    const requestBody = await req.json()
+    console.log('Request body received:', JSON.stringify(requestBody, null, 2))
+    
+    const { to, username, fullName, role }: EmailRequest = requestBody
 
     // Validate required fields
     if (!to || !username || !fullName) {
+      console.error('Missing required fields:', { to: !!to, username: !!username, fullName: !!fullName })
       return new Response(
         JSON.stringify({ success: false, error: 'Missing required fields' }),
         { 
@@ -39,14 +37,19 @@ serve(async (req: Request): Promise<Response> => {
       )
     }
 
-    // Email configuration - using Mailtrap
+    // Get environment variables
     const MAILTRAP_TOKEN = Deno.env.get('MAILTRAP_TOKEN')
-    const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'noreply@pmcockpit.com'
+    const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'noreply@demomailtrap.co'
     const FROM_NAME = Deno.env.get('FROM_NAME') || 'PM-Cockpit Team'
+
+    console.log('Environment check:', {
+      hasToken: !!MAILTRAP_TOKEN,
+      fromEmail: FROM_EMAIL,
+      fromName: FROM_NAME
+    })
 
     if (!MAILTRAP_TOKEN) {
       console.error('MAILTRAP_TOKEN not configured')
-      console.log('Email service not configured - skipping email send')
       return new Response(
         JSON.stringify({ 
           success: true, 
@@ -81,6 +84,9 @@ serve(async (req: Request): Promise<Response> => {
       html: emailHtml
     }
 
+    console.log('Sending email via Mailtrap API to:', to)
+    console.log('Email payload:', JSON.stringify(emailPayload, null, 2))
+
     // Send email via Mailtrap API
     const response = await fetch('https://send.api.mailtrap.io/api/send', {
       method: 'POST',
@@ -91,9 +97,21 @@ serve(async (req: Request): Promise<Response> => {
       body: JSON.stringify(emailPayload),
     })
 
+    console.log('Mailtrap API response status:', response.status)
+    
+    const responseText = await response.text()
+    console.log('Mailtrap API response body:', responseText)
+
     if (response.ok) {
-      const responseData = await response.json()
-      const messageId = responseData.message_ids?.[0] || 'unknown'
+      let responseData
+      try {
+        responseData = JSON.parse(responseText)
+      } catch (e) {
+        console.log('Response is not JSON, treating as success')
+        responseData = { message_ids: ['success'] }
+      }
+      
+      const messageId = responseData.message_ids?.[0] || responseData.message_id || 'sent'
       console.log(`Welcome email sent successfully to ${to}, Message ID: ${messageId}`)
       
       return new Response(
@@ -104,11 +122,23 @@ serve(async (req: Request): Promise<Response> => {
         }
       )
     } else {
-      const errorText = await response.text()
-      console.error(`Failed to send email to ${to}:`, errorText)
+      console.error(`Mailtrap API error - Status: ${response.status}`)
+      console.error('Error response:', responseText)
+      
+      // Try to parse error response
+      let errorMessage = 'Failed to send email'
+      try {
+        const errorData = JSON.parse(responseText)
+        errorMessage = errorData.message || errorData.error || errorMessage
+      } catch (e) {
+        errorMessage = responseText || errorMessage
+      }
       
       return new Response(
-        JSON.stringify({ success: false, error: 'Failed to send email' }),
+        JSON.stringify({ 
+          success: false, 
+          error: `Mailtrap API error (${response.status}): ${errorMessage}` 
+        }),
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -118,9 +148,13 @@ serve(async (req: Request): Promise<Response> => {
 
   } catch (error) {
     console.error('Error in send-welcome-email function:', error)
+    console.error('Error stack:', error.stack)
     
     return new Response(
-      JSON.stringify({ success: false, error: 'Internal server error' }),
+      JSON.stringify({ 
+        success: false, 
+        error: `Internal server error: ${error.message}` 
+      }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -241,16 +275,6 @@ function generateWelcomeEmailHTML(fullName: string, username: string, role: stri
             padding: 15px;
             margin: 20px 0;
             text-align: center;
-        }
-        .button {
-            display: inline-block;
-            background: #3b82f6;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            margin: 20px 0;
         }
     </style>
 </head>
