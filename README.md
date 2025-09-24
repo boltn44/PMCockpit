@@ -6,13 +6,19 @@ The application includes an automated email notification system that sends welco
 
 ### Setup Email Service
 
-1. **Configure SendGrid** (or your preferred email service):
+1. **Configure Mailtrap** for email testing:
    ```bash
-   # Add to your Supabase project's Edge Function secrets
-   SENDGRID_API_KEY=your_sendgrid_api_key_here
+   # Add to your Supabase project's Edge Function environment variables
+   MAILTRAP_TOKEN=your_mailtrap_api_token_here
    FROM_EMAIL=noreply@yourdomain.com
    FROM_NAME=Your Company Name
    ```
+
+   **To get your Mailtrap credentials:**
+   - Sign up at [Mailtrap.io](https://mailtrap.io)
+   - Go to Email API → Sending Domains
+   - Create or select a domain
+   - Copy your API Token from the integration settings
 
 2. **Deploy Edge Function**:
    ```bash
@@ -45,7 +51,6 @@ The application includes an automated email notification system that sends welco
 
 ### Troubleshooting
 
-- **No emails sent**: Check SENDGRID_API_KEY configuration
+- **No emails sent**: Check MAILTRAP_TOKEN configuration
 - **Emails in spam**: Configure SPF/DKIM records for your domain
 - **Function errors**: Check Supabase Edge Function logs
-- **Database errors**: Verify email_logs table exists

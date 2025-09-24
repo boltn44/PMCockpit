@@ -39,13 +39,13 @@ serve(async (req: Request): Promise<Response> => {
       )
     }
 
-    // Email configuration - using SendGrid as example
-    const SENDGRID_API_KEY = Deno.env.get('SENDGRID_API_KEY')
+    // Email configuration - using Mailtrap
+    const MAILTRAP_TOKEN = Deno.env.get('MAILTRAP_TOKEN')
     const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'noreply@pmcockpit.com'
     const FROM_NAME = Deno.env.get('FROM_NAME') || 'PM-Cockpit Team'
 
-    if (!SENDGRID_API_KEY) {
-      console.error('SENDGRID_API_KEY not configured')
+    if (!MAILTRAP_TOKEN) {
+      console.error('MAILTRAP_TOKEN not configured')
       console.log('Email service not configured - skipping email send')
       return new Response(
         JSON.stringify({ 
@@ -64,42 +64,36 @@ serve(async (req: Request): Promise<Response> => {
     const emailHtml = generateWelcomeEmailHTML(fullName, username, role)
     const emailText = generateWelcomeEmailText(fullName, username, role)
 
-    // SendGrid API payload
+    // Mailtrap API payload
     const emailPayload = {
-      personalizations: [
-        {
-          to: [{ email: to, name: fullName }],
-          subject: 'Welcome to PM-Cockpit - Account Created Successfully'
-        }
-      ],
       from: {
         email: FROM_EMAIL,
         name: FROM_NAME
       },
-      content: [
+      to: [
         {
-          type: 'text/plain',
-          value: emailText
-        },
-        {
-          type: 'text/html',
-          value: emailHtml
+          email: to,
+          name: fullName
         }
-      ]
+      ],
+      subject: 'Welcome to PM-Cockpit - Account Created Successfully',
+      text: emailText,
+      html: emailHtml
     }
 
-    // Send email via SendGrid API
-    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    // Send email via Mailtrap API
+    const response = await fetch('https://send.api.mailtrap.io/api/send', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+        'Authorization': `Bearer ${MAILTRAP_TOKEN}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(emailPayload),
     })
 
     if (response.ok) {
-      const messageId = response.headers.get('X-Message-Id') || 'unknown'
+      const responseData = await response.json()
+      const messageId = responseData.message_ids?.[0] || 'unknown'
       console.log(`Welcome email sent successfully to ${to}, Message ID: ${messageId}`)
       
       return new Response(
