@@ -25,9 +25,10 @@ export const emailService = {
 
       if (error) {
         console.error('Error calling email function:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
         return {
           success: false,
-          error: error.message || 'Failed to send email'
+          error: `Edge Function Error: ${error.message || 'Unknown error'} - ${JSON.stringify(error)}`
         };
       }
 
@@ -39,16 +40,18 @@ export const emailService = {
           messageId: data.messageId || data.message
         };
       } else {
+        console.error('Email function returned failure:', data);
         return {
           success: false,
-          error: data?.error || 'Unknown error occurred'
+          error: `Function Response Error: ${data?.error || 'Unknown error occurred'} - Response: ${JSON.stringify(data)}`
         };
       }
     } catch (error) {
       console.error('Email service error:', error);
+      console.error('Email service error details:', JSON.stringify(error, null, 2));
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: `Service Error: ${error instanceof Error ? error.message : 'Unknown error'} - ${JSON.stringify(error)}`
       };
     }
   },

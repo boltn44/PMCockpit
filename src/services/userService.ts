@@ -74,10 +74,13 @@ export const userService = {
           console.log(`Welcome email sent successfully to ${user.email}, Message ID: ${emailResult.messageId}`);
         }
       } else {
-        console.error(`Failed to send welcome email to ${user.email}:`, emailResult.error);
+        console.error(`Failed to send welcome email to ${user.email}:`);
+        console.error('Detailed error:', emailResult.error);
+        console.error('Full error object:', JSON.stringify(emailResult, null, 2));
       }
     } catch (error) {
       console.error('Error sending welcome email:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       // Don't throw error - email failure shouldn't break user creation
     }
   },
