@@ -36,7 +36,7 @@ export const emailService = {
       if (data?.success) {
         return {
           success: true,
-          messageId: data.messageId
+          messageId: data.messageId || data.message
         };
       } else {
         return {

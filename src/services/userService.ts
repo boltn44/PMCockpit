@@ -68,7 +68,11 @@ export const userService = {
       });
 
       if (emailResult.success) {
-        console.log(`Welcome email sent successfully to ${user.email}, Message ID: ${emailResult.messageId}`);
+        if (emailResult.messageId === 'demo-mode') {
+          console.log(`Email service not configured - welcome email skipped for ${user.email}`);
+        } else {
+          console.log(`Welcome email sent successfully to ${user.email}, Message ID: ${emailResult.messageId}`);
+        }
       } else {
         console.error(`Failed to send welcome email to ${user.email}:`, emailResult.error);
       }
