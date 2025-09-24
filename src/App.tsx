@@ -15,42 +15,10 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import { productService } from './services/productService';
 import { projectService } from './services/projectService';
 import { resourceService } from './services/resourceService';
+import { userService } from './services/userService';
 import { migrateProductsData, migrateProjectsData, migrateResourcesData, clearUtilizationData } from './utils/dataMigration';
 import { NavigationTab, Product, Project, Resource, User, Settings } from './types';
 import { isSupabaseConfigured, testSupabaseConnection } from './lib/supabase';
-
-// Clean initial data - only keep users for authentication
-const initialUsers: User[] = [
-  {
-    id: '1',
-    username: 'admin',
-    email: 'admin@pmcockpit.com',
-    fullName: 'System Administrator',
-    role: 'Admin',
-    status: 'Active',
-    createdAt: '2024-01-01T00:00:00Z',
-    lastLogin: '2024-01-15T10:30:00Z',
-  },
-  {
-    id: '2',
-    username: 'manager',
-    email: 'manager@pmcockpit.com',
-    fullName: 'Project Manager',
-    role: 'Manager',
-    status: 'Active',
-    createdAt: '2024-01-02T00:00:00Z',
-    lastLogin: '2024-01-14T14:20:00Z',
-  },
-  {
-    id: '3',
-    username: 'user',
-    email: 'user@pmcockpit.com',
-    fullName: 'Team Member',
-    role: 'User',
-    status: 'Active',
-    createdAt: '2024-01-03T00:00:00Z',
-  },
-];
 
 const defaultSettings: Settings = {
   companyName: 'PM-Cockpit Solutions',
@@ -66,7 +34,7 @@ function AppContent() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<NavigationTab>('dashboard');
   const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useLocalStorage<User[]>('pm-cockpit-users', initialUsers);
+  const [users, setUsers] = useState<User[]>([]);
   const [settings, setSettings] = useLocalStorage<Settings>('pm-cockpit-settings', defaultSettings);
   const [products, setProducts] = useLocalStorage<Product[]>('pm-cockpit-products', []);
   const [projects, setProjects] = useLocalStorage<Project[]>('pm-cockpit-projects', []);
@@ -88,6 +56,7 @@ function AppContent() {
             await refreshProducts();
             await refreshProjects();
             await refreshResources();
+            await refreshUsers();
           } else {
             console.warn('Supabase connection failed, falling back to localStorage');
           }
@@ -173,6 +142,15 @@ function AppContent() {
     }
   };
 
+  const refreshUsers = async () => {
+    try {
+      const data = await userService.getAll();
+      setUsers(data);
+    } catch (error) {
+      console.error('Error refreshing users:', error);
+    }
+  };
+
   if (!user) {
     return <LoginScreen />;
   }
@@ -203,7 +181,7 @@ function AppContent() {
       case 'reports':
         return <UtilizationReport resources={resources} projects={projects} />;
       case 'users':
-        return <UsersManager users={users} setUsers={setUsers} />;
+        return <UsersManager users={users} setUsers={setUsers} onRefresh={refreshUsers} />;
       case 'settings':
         return <SettingsManager settings={settings} setSettings={setSettings} />;
       default:

@@ -3,17 +3,20 @@ import { Users, Plus, Edit, Trash2, Search, Shield, Mail, Calendar, AlertTriangl
 import { User } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
+import { userService } from '../../services/userService';
 
 interface UsersManagerProps {
   users: User[];
   setUsers: (users: User[]) => void;
+  onRefresh: () => void;
 }
 
-export function UsersManager({ users, setUsers }: UsersManagerProps) {
+export function UsersManager({ users, setUsers, onRefresh }: UsersManagerProps) {
   const { user: currentUser } = useAuth();
   const { showSuccess, showError, showWarning } = useToast();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; user: User | null }>({ show: false, user: null });
@@ -33,29 +36,29 @@ export function UsersManager({ users, setUsers }: UsersManagerProps) {
     return matchesSearch && matchesRole;
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     
-    if (editingUser) {
-      setUsers(users.map(u => 
-        u.id === editingUser.id 
-          ? { ...editingUser, ...formData }
-          : u
-      ));
-    } else {
-      const newUser: User = {
-        id: Date.now().toString(),
-        ...formData,
-        createdAt: new Date().toISOString(),
-      };
-      setUsers([...users, newUser]);
+    try {
+      if (editingUser) {
+        await userService.update(editingUser.id, formData);
+      } else {
+        await userService.create(formData);
+      }
+      
+      await onRefresh();
+      resetForm();
+      showSuccess(
+        editingUser ? 'User Updated' : 'User Created',
+        `${formData.fullName} has been ${editingUser ? 'updated' : 'created'} successfully.`
+      );
+    } catch (error) {
+      console.error('Error saving user:', error);
+      showError('Error Saving User', 'Please try again.');
+    } finally {
+      setLoading(false);
     }
-    
-    resetForm();
-    showSuccess(
-      editingUser ? 'User Updated' : 'User Created',
-      `${formData.fullName} has been ${editingUser ? 'updated' : 'created'} successfully.`
-    );
   };
 
   const resetForm = () => {
@@ -95,11 +98,22 @@ export function UsersManager({ users, setUsers }: UsersManagerProps) {
   };
 
   const confirmDelete = () => {
-    if (deleteConfirm.user) {
-      setUsers(users.filter(u => u.id !== deleteConfirm.user!.id));
-      showSuccess('User Deleted', `${deleteConfirm.user.fullName} has been deleted successfully.`);
-    }
-    setDeleteConfirm({ show: false, user: null });
+    if (!deleteConfirm.user) return;
+    
+    const deleteUser = async () => {
+      try {
+        await userService.delete(deleteConfirm.user!.id);
+        await onRefresh();
+        showSuccess('User Deleted', `${deleteConfirm.user!.fullName} has been deleted successfully.`);
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        showError('Error Deleting User', 'Please try again.');
+      } finally {
+        setDeleteConfirm({ show: false, user: null });
+      }
+    };
+    
+    deleteUser();
   };
 
   const cancelDelete = () => {
@@ -248,9 +262,10 @@ export function UsersManager({ users, setUsers }: UsersManagerProps) {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                  disabled={loading}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
                 >
-                  {editingUser ? 'Update' : 'Create'}
+                  {loading ? 'Saving...' : (editingUser ? 'Update' : 'Create')}
                 </button>
               </div>
             </form>
