@@ -85,11 +85,7 @@ export const utilizationService = {
     console.log('batchUpsert called with:', utilizations);
     console.log('isSupabaseConfigured:', isSupabaseConfigured);
     
-    // Force localStorage usage for now to avoid UUID issues
-    const forceLocalStorage = true;
-    console.log('Forcing localStorage usage:', forceLocalStorage);
-
-    if (!isSupabaseConfigured || forceLocalStorage) {
+    if (!isSupabaseConfigured) {
       // Fallback to localStorage
       try {
         console.log('Using localStorage fallback');
@@ -156,6 +152,7 @@ export const utilizationService = {
       }
     }
     
+    console.log('Using Supabase for utilization data');
     // Validate utilizations before sending to Supabase
     const validUtilizations = utilizations.filter(u => 
       u.resourceId && u.projectId && u.dateRangeId && 

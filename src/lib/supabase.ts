@@ -3,45 +3,58 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Log environment variables for debugging
+// Validate environment variables
+if (!supabaseUrl) {
+  throw new Error('Missing VITE_SUPABASE_URL environment variable');
+}
+
+if (!supabaseAnonKey) {
+  throw new Error('Missing VITE_SUPABASE_ANON_KEY environment variable');
+}
+
+// Validate that the URL is a proper Supabase URL (not localhost)
+if (!supabaseUrl.includes('supabase.co') && !supabaseUrl.includes('supabase.in')) {
+  throw new Error('VITE_SUPABASE_URL must be a valid remote Supabase URL');
+}
+
+// Log configuration for debugging (without exposing sensitive data)
 console.log('Supabase URL:', supabaseUrl);
-console.log('Supabase Key exists:', !!supabaseAnonKey);
-console.log('Supabase Key length:', supabaseAnonKey?.length || 0);
+console.log('Supabase Key configured:', !!supabaseAnonKey);
 
-// Check if Supabase is properly configured with valid values
-const isValidSupabaseUrl = supabaseUrl && 
-  supabaseUrl !== 'undefined' && 
-  supabaseUrl !== '' && 
-  supabaseUrl.startsWith('http') &&
-  supabaseUrl.includes('supabase.co');
+// Check if Supabase is properly configured with valid remote values
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey && 
+  (supabaseUrl.includes('supabase.co') || supabaseUrl.includes('supabase.in')));
 
-const isValidSupabaseKey = supabaseAnonKey && 
-  supabaseAnonKey !== 'undefined' && 
-  supabaseAnonKey !== '' && 
-  supabaseAnonKey.length > 20;
+console.log('Supabase configured for remote connection:', isSupabaseConfigured);
 
-// Disable Supabase to use localStorage exclusively
-export const isSupabaseConfigured = false;
-
-console.log('isSupabaseConfigured:', isSupabaseConfigured);
-console.log('URL valid:', isValidSupabaseUrl);
-console.log('Key valid:', isValidSupabaseKey);
-
-// Create a mock client if environment variables are missing
-const createMockClient = () => ({
-  from: () => ({
-    select: () => ({ data: [], error: null }),
-    insert: () => ({ data: null, error: { message: 'Supabase not configured' } }),
-    update: () => ({ data: null, error: { message: 'Supabase not configured' } }),
-    delete: () => ({ error: { message: 'Supabase not configured' } }),
-    upsert: () => ({ error: { message: 'Supabase not configured' } }),
-    eq: function() { return this; },
-    order: function() { return this; },
-    limit: function() { return this; },
-    single: function() { return this; },
-  }),
+// Create Supabase client with remote connection
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+  db: {
+    schema: 'public',
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'pm-cockpit-app',
+    },
+  },
 });
 
-export const supabase = (!isValidSupabaseUrl || !isValidSupabaseKey) 
-  ? createMockClient() 
-  : createClient(supabaseUrl, supabaseAnonKey);
+// Test connection function
+export const testSupabaseConnection = async () => {
+  try {
+    const { data, error } = await supabase.from('departments').select('count').limit(1);
+    if (error) {
+      console.error('Supabase connection test failed:', error);
+      return false;
+    }
+    console.log('Supabase connection test successful');
+    return true;
+  } catch (error) {
+    console.error('Supabase connection test error:', error);
+    return false;
+  }
+};

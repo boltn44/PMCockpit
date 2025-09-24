@@ -17,7 +17,7 @@ import { projectService } from './services/projectService';
 import { resourceService } from './services/resourceService';
 import { migrateProductsData, migrateProjectsData, migrateResourcesData, clearUtilizationData } from './utils/dataMigration';
 import { NavigationTab, Product, Project, Resource, User, Settings } from './types';
-import { isSupabaseConfigured } from './lib/supabase';
+import { isSupabaseConfigured, testSupabaseConnection } from './lib/supabase';
 
 // Clean initial data - only keep users for authentication
 const initialUsers: User[] = [
@@ -78,11 +78,24 @@ function AppContent() {
       try {
         setLoading(true);
         
-        // Use localStorage only to avoid migration conflicts
-        console.log('Using localStorage for data storage');
+        // Test Supabase connection first
+        if (isSupabaseConfigured) {
+          console.log('Testing Supabase connection...');
+          const connectionTest = await testSupabaseConnection();
+          if (connectionTest) {
+            console.log('Using Supabase for data storage');
+            // Load data from Supabase
+            await refreshProducts();
+            await refreshProjects();
+            await refreshResources();
+          } else {
+            console.warn('Supabase connection failed, falling back to localStorage');
+          }
+        } else {
+          console.log('Supabase not configured, using localStorage for data storage');
+        }
         
-        // Data is already loaded from localStorage via useLocalStorage hooks
-        // Just ensure any old data is properly migrated
+        // Ensure any existing localStorage data is properly migrated
         let localProducts = JSON.parse(localStorage.getItem('pm-cockpit-products') || '[]');
         let localProjects = JSON.parse(localStorage.getItem('pm-cockpit-projects') || '[]');
         let localResources = JSON.parse(localStorage.getItem('pm-cockpit-resources') || '[]');
@@ -126,6 +139,8 @@ function AppContent() {
       if (isSupabaseConfigured) {
         const data = await productService.getAll();
         setProducts(data);
+      } else {
+        console.log('Supabase not configured, keeping localStorage data');
       }
     } catch (error) {
       console.error('Error refreshing products:', error);
@@ -137,6 +152,8 @@ function AppContent() {
       if (isSupabaseConfigured) {
         const data = await projectService.getAll();
         setProjects(data);
+      } else {
+        console.log('Supabase not configured, keeping localStorage data');
       }
     } catch (error) {
       console.error('Error refreshing projects:', error);
@@ -148,6 +165,8 @@ function AppContent() {
       if (isSupabaseConfigured) {
         const data = await resourceService.getAll();
         setResources(data);
+      } else {
+        console.log('Supabase not configured, keeping localStorage data');
       }
     } catch (error) {
       console.error('Error refreshing resources:', error);
