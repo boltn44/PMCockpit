@@ -59,6 +59,7 @@ export const userService = {
   async sendWelcomeEmailAsync(user: User): Promise<void> {
     try {
       console.log('Sending welcome email for user:', user.username);
+      console.log('User email:', user.email);
       
       const emailResult = await emailService.sendWelcomeEmail({
         to: user.email,
@@ -66,6 +67,8 @@ export const userService = {
         fullName: user.fullName,
         role: user.role
       });
+
+      console.log('Email service result:', emailResult);
 
       if (emailResult.success) {
         if (emailResult.messageId === 'demo-mode') {
@@ -75,12 +78,11 @@ export const userService = {
         }
       } else {
         console.error(`Failed to send welcome email to ${user.email}:`);
-        console.error('Detailed error:', emailResult.error);
-        console.error('Full error object:', JSON.stringify(emailResult, null, 2));
+        console.error('Email error:', emailResult.error);
+        console.error('Full email result:', JSON.stringify(emailResult, null, 2));
       }
     } catch (error) {
-      console.error('Error sending welcome email:', error);
-      console.error('Error details:', JSON.stringify(error, null, 2));
+      console.error('Unexpected error in sendWelcomeEmailAsync:', error);
       // Don't throw error - email failure shouldn't break user creation
     }
   },
